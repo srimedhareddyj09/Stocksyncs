@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inventory Management System</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#667085;--line:#e5e7eb;--primary:#2563eb;--primary2:#1d4ed8;--green:#16a34a;--orange:#d97706;--red:#dc2626;--sidebar:#111827}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+.app{display:flex;min-height:100vh}.sidebar{width:248px;background:var(--sidebar);color:#fff;padding:22px 14px;position:fixed;inset:0 auto 0 0}.brand{font-size:20px;font-weight:800;padding:0 12px 25px}.brand span{color:#60a5fa}.nav-title{font-size:11px;text-transform:uppercase;color:#9ca3af;padding:18px 12px 8px;letter-spacing:.08em}.nav button{width:100%;border:0;background:none;color:#d1d5db;text-align:left;padding:11px 12px;border-radius:8px;cursor:pointer;font-size:14px}.nav button:hover,.nav button.active{background:#1f2937;color:#fff}.userbox{position:absolute;bottom:16px;left:14px;right:14px;border-top:1px solid #374151;padding:14px 8px}.main{margin-left:248px;width:calc(100% - 248px)}.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:5}.search{width:310px;background:#f3f4f6;border:1px solid var(--line);padding:10px 13px;border-radius:8px}.content{padding:26px 30px}.pagehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.pagehead h1{margin:0;font-size:25px}.muted{color:var(--muted);font-size:13px}.btn{border:0;border-radius:8px;padding:10px 14px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}.btn:hover{background:var(--primary2)}.btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:17px}.kpi .label{font-size:12px;color:var(--muted)}.kpi .value{font-size:27px;font-weight:800;margin-top:8px}.kpi .trend{font-size:12px;margin-top:7px}.green{color:var(--green)}.red{color:var(--red)}.orange{color:var(--orange)}.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:18px}.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px}.filters select,.filters input{padding:9px;border:1px solid var(--line);border-radius:8px;background:#fff}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);font-size:13px}.table th{font-size:11px;text-transform:uppercase;color:var(--muted)}.badge{padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700}.badge.ready{background:#dcfce7;color:#166534}.badge.waiting{background:#fef3c7;color:#92400e}.badge.done{background:#dbeafe;color:#1e40af}.badge.draft{background:#f3f4f6;color:#4b5563}.badge.canceled{background:#fee2e2;color:#991b1b}.stockbar{height:7px;background:#edf0f4;border-radius:8px;overflow:hidden}.stockbar i{display:block;height:100%;background:var(--primary)}.empty{padding:30px;text-align:center;color:var(--muted)}.view{display:none}.view.active{display:block}.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:20}.modal.open{display:flex}.modalbox{width:min(680px,92vw);background:#fff;border-radius:14px;padding:22px}.modalhead{display:flex;justify-content:space-between;align-items:center}.modalgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field input,.field select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px}.field.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.toast{position:fixed;right:22px;bottom:22px;background:#111827;color:#fff;padding:12px 16px;border-radius:9px;display:none;z-index:30}.activity{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.dot{width:9px;height:9px;border-radius:50%;background:var(--primary);margin-top:5px}.small{font-size:12px}.profile{display:grid;grid-template-columns:180px 1fr;gap:20px}.avatar{width:110px;height:110px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:35px;font-weight:800;color:#1d4ed8}
+@media(max-width:1050px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}@media(max-width:720px){.sidebar{width:70px}.brand{font-size:0}.brand span{font-size:20px}.nav button{font-size:0;text-align:center}.nav-title,.userbox{display:none}.main{margin-left:70px;width:calc(100% - 70px)}.topbar{padding:0 14px}.search{width:180px}.content{padding:18px}.kpis{grid-template-columns:1fr}.modalgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">Stock<span>Flow</span></div>
+  <div class="nav-title">Workspace</div>
+  <div class="nav">
+    <button class="active" data-view="dashboard">▦ &nbsp; Dashboard</button>
+    <button data-view="products">▣ &nbsp; Products</button>
+    <button data-view="receipts">↓ &nbsp; Receipts</button>
+    <button data-view="deliveries">↑ &nbsp; Delivery Orders</button>
+    <button data-view="transfers">⇄ &nbsp; Internal Transfers</button>
+    <button data-view="adjustments">± &nbsp; Inventory Adjustments</button>
+    <button data-view="history">☷ &nbsp; Move History</button>
+    <button data-view="settings">⚙ &nbsp; Settings</button>
+  </div>
+  <div class="nav-title">Account</div>
+  <div class="nav"><button data-view="profile">● &nbsp; My Profile</button><button onclick="logout()">↪ &nbsp; Logout</button></div>
+  <div class="userbox"><b>Inventory Manager</b><div class="small" style="color:#9ca3af">admin@stockflow.local</div></div>
+</aside>
+
+<main class="main">
+<header class="topbar"><input id="globalSearch" class="search" placeholder="Search SKU, product, document..." oninput="renderCurrent()" /><div class="muted">Main Warehouse ▾ &nbsp; <b>Sat, 26 Sep 2026</b></div></header>
+<section class="content">
+
+<div id="dashboard" class="view active">
+  <div class="pagehead"><div><h1>Inventory Dashboard</h1><div class="muted">Real-time snapshot of stock operations</div></div></div>
+  <div class="kpis">
+    <div class="card kpi"><div class="label">Total Products in Stock</div><div id="kpiStock" class="value">—</div><div class="trend green">● Live inventory</div></div>
+    <div class="card kpi"><div class="label">Low / Out of Stock</div><div id="kpiLow" class="value">—</div><div class="trend red">Needs attention</div></div>
+    <div class="card kpi"><div class="label">Pending Receipts</div><div id="kpiReceipts" class="value">—</div><div class="trend orange">Waiting / Ready</div></div>
+    <div class="card kpi"><div class="label">Pending Deliveries</div><div id="kpiDeliveries" class="value">—</div><div class="trend orange">Waiting / Ready</div></div>
+    <div class="card kpi"><div class="label">Transfers Scheduled</div><div id="kpiTransfers" class="value">—</div><div class="trend">Internal movement</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>Recent Operations</h3><div class="filters"><select id="dashType"><option value="">All types</option><option>Receipt</option><option>Delivery</option><option>Internal</option><option>Adjustment</option></select><select id="dashStatus"><option value="">All statuses</option><option>Draft</option><option>Waiting</option><option>Ready</option><option>Done</option><option>Canceled</option></select></div><div id="activity"></div></div>
+    <div class="card"><h3>Stock Alerts</h3><div id="alerts"></div></div>
+  </div>
+</div>
+
+<div id="products" class="view">
+ <div class="pagehead"><div><h1>Products</h1><div class="muted">Products, SKUs, locations and reorder rules</div></div><button class="btn" onclick="openModal('productModal')">+ New Product</button></div>
+ <div class="card"><div class="filters"><input id="productFilter" placeholder="Search product / SKU" oninput="renderProducts()"><select id="categoryFilter" onchange="renderProducts()"><option value="">All categories</option></select><select id="locationFilter" onchange="renderProducts()"><option value="">All locations</option></select></div><table class="table"><thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Stock</th><th>Location</th><th>Reorder</th><th>Status</th></tr></thead><tbody id="productRows"></tbody></table></div>
+</div>
+
+<div id="receipts" class="view"><div class="pagehead"><div><h1>Receipts</h1><div class="muted">Incoming goods from vendors</div></div><button class="btn" onclick="openOperation('Receipt')">+ New Receipt</button></div><div class="card"><div id="receiptTable"></div></div></div>
+<div id="deliveries" class="view"><div class="pagehead"><div><h1>Delivery Orders</h1><div class="muted">Pick, pack and validate outgoing stock</div></div><button class="btn" onclick="openOperation('Delivery')">+ New Delivery</button></div><div class="card"><div id="deliveryTable"></div></div></div>
+<div id="transfers" class="view"><div class="pagehead"><div><h1>Internal Transfers</h1><div class="muted">Move stock between warehouses, racks and locations</div></div><button class="btn" onclick="openOperation('Internal')">+ New Transfer</button></div><div class="card"><div id="transferTable"></div></div></div>
+<div id="adjustments" class="view"><div class="pagehead"><div><h1>Inventory Adjustments</h1><div class="muted">Reconcile recorded stock with physical counts</div></div><button class="btn" onclick="openOperation('Adjustment')">+ New Adjustment</button></div><div class="card"><div id="adjustmentTable"></div></div></div>
+<div id="history" class="view"><div class="pagehead"><div><h1>Move History</h1><div class="muted">Complete stock ledger</div></div></div><div class="card"><div class="filters"><select id="historyType" onchange="renderHistory()"><option value="">All document types</option><option>Receipt</option><option>Delivery</option><option>Internal</option><option>Adjustment</option></select></div><table class="table"><thead><tr><th>Date</th><th>Document</th><th>Type</th><th>Product</th><th>Qty</th><th>From</th><th>To</th><th>Note</th></tr></thead><tbody id="historyRows"></tbody></table></div></div>
+<div id="settings" class="view"><div class="pagehead"><div><h1>Settings</h1><div class="muted">Warehouse and system configuration</div></div></div><div class="card"><h3>Warehouses & Locations</h3><table class="table"><thead><tr><th>Warehouse</th><th>Location</th><th>Type</th><th>Status</th></tr></thead><tbody><tr><td>Main Warehouse</td><td>Rack A</td><td>Storage</td><td><span class="badge ready">Active</span></td></tr><tr><td>Main Warehouse</td><td>Rack B</td><td>Storage</td><td><span class="badge ready">Active</span></td></tr><tr><td>Main Warehouse</td><td>Production Rack</td><td>Production</td><td><span class="badge ready">Active</span></td></tr><tr><td>Warehouse 2</td><td>Rack A</td><td>Storage</td><td><span class="badge ready">Active</span></td></tr></tbody></table></div></div>
+<div id="profile" class="view"><div class="pagehead"><div><h1>My Profile</h1><div class="muted">Account settings</div></div></div><div class="card profile"><div class="avatar">IM</div><div><h2>Inventory Manager</h2><p class="muted">admin@stockflow.local</p><div class="field"><label>Role</label><input value="Inventory Manager" disabled></div></div></div></div>
+
+</section></main>
+</div>
+
+<div id="productModal" class="modal"><div class="modalbox"><div class="modalhead"><h2>New Product</h2><button class="btn secondary" onclick="closeModal('productModal')">✕</button></div><div class="modalgrid">
+<div class="field"><label>Name</label><input id="pName"></div><div class="field"><label>SKU / Code</label><input id="pSku"></div>
+<div class="field"><label>Category</label><input id="pCat" placeholder="Raw Materials"></div><div class="field"><label>Unit of Measure</label><select id="pUom"><option>Units</option><option>kg</option><option>m</option><option>Boxes</option></select></div>
+<div class="field"><label>Initial Stock</label><input id="pQty" type="number" value="0"></div><div class="field"><label>Reorder Level</label><input id="pReorder" type="number" value="10"></div>
+<div class="field"><label>Location</label><input id="pLoc" value="Rack A"></div></div><div class="actions"><button class="btn secondary" onclick="closeModal('productModal')">Cancel</button><button class="btn" onclick="saveProduct()">Create Product</button></div></div></div>
+
+<div id="operationModal" class="modal"><div class="modalbox"><div class="modalhead"><h2 id="opTitle">New Operation</h2><button class="btn secondary" onclick="closeModal('operationModal')">✕</button></div><div class="modalgrid">
+<div class="field"><label>Product</label><select id="opProduct"></select></div><div class="field"><label>Quantity</label><input id="opQty" type="number" min="1" value="1"></div>
+<div class="field"><label>From Location</label><input id="opFrom" value="Main Warehouse"></div><div class="field"><label>To Location</label><input id="opTo" value="Rack A"></div>
+<div class="field"><label>Supplier / Customer / Reference</label><input id="opParty" placeholder="Optional"></div><div class="field"><label>Status</label><select id="opStatus"><option>Draft</option><option>Waiting</option><option>Ready</option><option>Done</option><option>Canceled</option></select></div>
+<div class="field full"><label>Note</label><input id="opNote" placeholder="Optional note"></div></div><div class="actions"><button class="btn secondary" onclick="closeModal('operationModal')">Cancel</button><button class="btn" onclick="saveOperation()">Save & Validate</button></div></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const KEY='stockflow_ims_blank_v2'; localStorage.removeItem('stockflow_ims_v1'); localStorage.removeItem('stockflow_ims_blank_v1');
+const defaultState={products:[],ops:[],ledger:[]};
+let state=JSON.parse(localStorage.getItem(KEY)||'null')||defaultState;
+let currentOp='Receipt';
+
+function persist(){localStorage.setItem(KEY,JSON.stringify(state))}
+function toast(s){const t=document.getElementById('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function nav(view){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(view).classList.add('active');document.querySelectorAll('.nav button[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));renderCurrent()}
+document.querySelectorAll('.nav button[data-view]').forEach(b=>b.onclick=()=>nav(b.dataset.view));
+function saveProduct(){
+ const p={id:Date.now(),name:pName.value.trim(),sku:pSku.value.trim(),cat:pCat.value.trim()||'Uncategorized',uom:pUom.value,qty:+pQty.value||0,reorder:+pReorder.value||0,loc:pLoc.value.trim()||'Rack A'};
+ if(!p.name||!p.sku)return toast('Name and SKU are required');
+ state.products.push(p);persist();closeModal('productModal');['pName','pSku','pCat'].forEach(id=>document.getElementById(id).value='');renderCurrent();toast('Product created');
+}
+function openOperation(type){
+ currentOp=type;document.getElementById('opTitle').textContent='+ New '+type;
+ opProduct.innerHTML=state.products.map(p=>`<option value="${p.id}">${p.name} (${p.sku})</option>`).join('');
+ opFrom.value=type==='Receipt'?'Vendor':type==='Delivery'?'Rack A':type==='Internal'?'Rack A':'Production Rack';
+ opTo.value=type==='Receipt'?'Rack A':type==='Delivery'?'Customer':type==='Internal'?'Production Rack':'Production Rack';
+ opStatus.value=type==='Adjustment'?'Done':'Draft';openModal('operationModal');
+}
+function saveOperation(){
+ const p=state.products.find(x=>x.id==opProduct.value), q=+opQty.value||0, status=opStatus.value;
+ if(!p||q<=0)return toast('Select a product and enter a valid quantity');
+ let signed=q;
+ if(currentOp==='Delivery')signed=-q;
+ if(currentOp==='Adjustment'){const target=+prompt(`Current recorded stock: ${p.qty}. Enter physical counted quantity:`); if(!Number.isFinite(target))return; signed=target-p.qty}
+ if(status==='Done'){
+   if(currentOp==='Internal'){/* total unchanged */}
+   else {p.qty=Math.max(0,p.qty+signed)}
+ }
+ const id=currentOp.slice(0,3).toUpperCase()+'-'+String(state.ops.length+1).padStart(3,'0');
+ const date=new Date().toISOString().slice(0,10);
+ const op={id,type:currentOp,product:p.name,qty:signed,status,from:opFrom.value,to:opTo.value,date,note:opNote.value};
+ state.ops.unshift(op);if(status==='Done')state.ledger.unshift({date,doc:id,type:currentOp,product:p.name,qty:signed,from:opFrom.value,to:opTo.value,note:opNote.value});
+ persist();closeModal('operationModal');renderCurrent();toast(currentOp+' saved');
+}
+function badge(s){return `<span class="badge ${s.toLowerCase()}">${s}</span>`}
+function tableOps(type,target){
+ const q=(globalSearch.value||'').toLowerCase();let arr=state.ops.filter(o=>o.type===type&&(o.id+' '+o.product+' '+o.status).toLowerCase().includes(q));
+ document.getElementById(target).innerHTML=arr.length?`<table class="table"><thead><tr><th>Document</th><th>Product</th><th>Qty</th><th>Status</th><th>From</th><th>To</th><th>Date</th></tr></thead><tbody>${arr.map(o=>`<tr><td><b>${o.id}</b></td><td>${o.product}</td><td>${o.qty}</td><td>${badge(o.status)}</td><td>${o.from}</td><td>${o.to}</td><td>${o.date}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No operations yet. Create one to get started.</div>';
+}
+function renderProducts(){
+ const q=(productFilter.value||globalSearch.value||'').toLowerCase(), cat=categoryFilter.value, loc=locationFilter.value;
+ const cats=[...new Set(state.products.map(p=>p.cat))], locs=[...new Set(state.products.map(p=>p.loc))];
+ categoryFilter.innerHTML='<option value="">All categories</option>'+cats.map(x=>`<option ${x===cat?'selected':''}>${x}</option>`).join('');
+ locationFilter.innerHTML='<option value="">All locations</option>'+locs.map(x=>`<option ${x===loc?'selected':''}>${x}</option>`).join('');
+ const arr=state.products.filter(p=>(p.name+' '+p.sku+' '+p.cat).toLowerCase().includes(q)&&(!cat||p.cat===cat)&&(!loc||p.loc===loc));
+ productRows.innerHTML=arr.map(p=>`<tr><td><b>${p.name}</b><div class="muted">${p.uom}</div></td><td>${p.sku}</td><td>${p.cat}</td><td><b>${p.qty}</b><div class="stockbar"><i style="width:${Math.min(100,p.reorder?Math.max(4,p.qty/p.reorder*50):80)}%"></i></div></td><td>${p.loc}</td><td>${p.reorder}</td><td>${p.qty===0?badge('Canceled'):p.qty<=p.reorder?'<span class="badge waiting">Low Stock</span>':'<span class="badge ready">In Stock</span>'}</td></tr>`).join('');
+}
+function renderDashboard(){
+ const total=state.products.reduce((a,p)=>a+p.qty,0), low=state.products.filter(p=>p.qty<=p.reorder).length;
+ kpiStock.textContent=total;kpiLow.textContent=low;kpiReceipts.textContent=state.ops.filter(o=>o.type==='Receipt'&&['Waiting','Ready'].includes(o.status)).length;kpiDeliveries.textContent=state.ops.filter(o=>o.type==='Delivery'&&['Waiting','Ready'].includes(o.status)).length;kpiTransfers.textContent=state.ops.filter(o=>o.type==='Internal'&&o.status!=='Done'&&o.status!=='Canceled').length;
+ const t=dashType.value,s=dashStatus.value, q=(globalSearch.value||'').toLowerCase();
+ const arr=state.ops.filter(o=>(!t||o.type===t)&&(!s||o.status===s)&&(o.id+' '+o.product).toLowerCase().includes(q)).slice(0,8);
+ activity.innerHTML=arr.map(o=>`<div class="activity"><span class="dot"></span><div><b>${o.id}</b> · ${o.type}<div>${o.product} · ${o.qty} · ${badge(o.status)}</div><div class="muted small">${o.date}</div></div></div>`).join('')||'<div class="empty">No operations yet.</div>';
+ alerts.innerHTML=state.products.filter(p=>p.qty<=p.reorder).map(p=>`<div class="activity"><span class="dot" style="background:var(--red)"></span><div><b>${p.name}</b><div class="muted">${p.qty} ${p.uom} remaining · reorder at ${p.reorder}</div></div></div>`).join('')||'<div class="empty">No products added yet.</div>';
+}
+function renderHistory(){
+ const type=historyType.value,q=(globalSearch.value||'').toLowerCase();
+ historyRows.innerHTML=state.ledger.filter(x=>(!type||x.type===type)&&(x.doc+' '+x.product+' '+x.note).toLowerCase().includes(q)).map(x=>`<tr><td>${x.date}</td><td><b>${x.doc}</b></td><td>${x.type}</td><td>${x.product}</td><td class="${x.qty<0?'red':'green'}"><b>${x.qty>0?'+':''}${x.qty}</b></td><td>${x.from}</td><td>${x.to}</td><td>${x.note||''}</td></tr>`).join('');
+}
+function renderCurrent(){
+ const v=document.querySelector('.view.active')?.id;
+ if(v==='dashboard')renderDashboard(); if(v==='products')renderProducts();if(v==='receipts')tableOps('Receipt','receiptTable');if(v==='deliveries')tableOps('Delivery','deliveryTable');if(v==='transfers')tableOps('Internal','transferTable');if(v==='adjustments')tableOps('Adjustment','adjustmentTable');if(v==='history')renderHistory();
+}
+dashType.onchange=renderDashboard;dashStatus.onchange=renderDashboard;
+function logout(){toast('Demo logout — connect this UI to your authentication service for production use.')}
+renderCurrent();
+</script>
+</body>
+</html>
